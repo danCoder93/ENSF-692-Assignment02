@@ -13,22 +13,15 @@
 # You do not need to provide additional commenting above this class, just the user-defined functions within the class
 class Sensor:
 
-    # status attributes
-    light = "green"
-    pedestrian = "no"
-    vehicle = "no"
-
-    # status messages
-    print_status = ""
-    print_statement = ""
-
     # Must include a constructor that uses default values
     # You do not need to provide commenting above the constructor
     def __init__(self):
-        pass
+        # status attributes
+        self.light = "green"
+        self.pedestrian = "no"
+        self.vehicle = "no"
 
     # Function takes main_input and status_input as arguments and update the vision related attributes
-    # It also based on various rules create print statements but not print them at this moment
     # It returns a boolean in case the status change was successful and false if no status was updated
     def update_status(self, main_input, status_input):
         # default return value to false
@@ -50,30 +43,32 @@ class Sensor:
                     self.vehicle = status_input
                     updated = True
 
-        # logic for preparing print strings
-        if self.light == "red" or self.pedestrian == "yes" or self.vehicle == "yes":
-            self.print_statement = "STOP"
-        elif self.light == "green" and self.pedestrian == "no" and self.vehicle == "no":
-            self.print_statement = "Proceed"
-        elif self.light == "yellow" and self.pedestrian == "no" and self.vehicle == "no":
-            self.print_statement = "Caution"
-
-        # overall status strings
-        self.print_status = f"Light = {self.light} , Pedestrian = {self.pedestrian} , Vehicle = {self.vehicle} ."
-
         # return the status of the function
         return updated
 
+    # Function prints the action message
+    # It based on various rules create print statements
+    def print_action(self):
+        # overall status strings
+        if self.light == "red" or self.pedestrian == "yes" or self.vehicle == "yes":
+            print("STOP")
+        elif self.light == "green" and self.pedestrian == "no" and self.vehicle == "no":
+            print("Proceed")
+        elif self.light == "yellow" and self.pedestrian == "no" and self.vehicle == "no":
+            print("Caution")
+        print()
+
+    # Function prints the current status
+    def print_status(self):
+        # logic for preparing print strings
+        print(f"Light = {self.light} , Pedestrian = {self.pedestrian} , Vehicle = {self.vehicle} .\n")
 
 
 # The sensor object should be passed to this function to print the action message and current status
 # Replace these comments with your function commenting
 def print_message(sensor):
-    print(sensor.print_statement)
-    print()
-    print(sensor.print_status)
-    print()
-
+    sensor.print_action()
+    sensor.print_status()
 
 
 
@@ -90,18 +85,18 @@ def main():
         try:
             main_input = input("Select 1 for light, 2 for pedestrian, 3 for vehicle, or 0 to end the program: ")
 
-            if main_input != "0" and main_input != "1" and main_input != "2" and main_input != "3":
-                raise ValueError()
-            elif main_input == "0":
+            # check for program quit before anything
+            if main_input == "0":
                 break
+            elif main_input != "1" and main_input != "2" and main_input != "3":
+                raise ValueError()
 
             status_input = input("What change has been identified?: ")
 
-            if s1.update_status(main_input, status_input):
-                print()
-            else:
-                print("Invalid vision change.\n")
+            if not(s1.update_status(main_input, status_input)):
+                print("Invalid vision change.")
 
+            print()
             print_message(s1)
 
         except ValueError:
